@@ -32,6 +32,7 @@ router.get('/vehicle/:brand_slug', getVehicleBySlug, (request, response) => {
 // router.post('/', async (request, response) => {
 //     const brand = new BrandModel({
 //         name: request.body.name,
+//         description: request.body.description
 //         slug: request.body.slug
 //     })
 
