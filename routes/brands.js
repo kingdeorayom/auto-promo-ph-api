@@ -22,10 +22,11 @@ router.get('/:id', getBrandById, (request, response) => {
 })
 
 // Getting all vehicles by slug
-router.get('/vehicle/:brand_slug', getVehicleBySlug, (request, response) => {
+router.get('/vehicle/:brand_slug', getVehicleByBrandSlug, (request, response) => {
     response.json(response.vehicle)
     // console.log(response.json())
 })
+
 
 // Creating one brand
 
@@ -64,7 +65,7 @@ async function getBrandById(request, response, next) {
 }
 
 // Get vehicle by brand
-async function getVehicleBySlug(request, response, next) {
+async function getVehicleByBrandSlug(request, response, next) {
     console.log(request.params)
     let vehicle
     try {

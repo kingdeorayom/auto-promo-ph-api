@@ -43,6 +43,11 @@ router.get('/:id', getVehicleById, (request, response) => {
     response.json(response.vehicle)
 })
 
+// Getting one vehicle by vehicle slug
+router.get('/detail/:vehicle_slug', getVehicleBySlug, (request, response) => {
+    response.json(response.vehicle)
+})
+
 // Updating one vehicle by id
 router.patch('/:id', getVehicleById, async (request, response) => {
 
@@ -106,5 +111,23 @@ async function getVehicleById(request, response, next) {
     response.vehicle = vehicle
     next()
 }
+
+// Get vehicle by vehicle slug
+async function getVehicleBySlug(request, response, next) {
+    console.log(request.params)
+    let vehicle
+    try {
+        vehicle = await VehicleModel.findOne({ vehicle_slug: request.params.vehicle_slug })
+        if (vehicle == null) {
+            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
+        }
+    } catch (err) {
+        return response.status(500).json({ message: err.message })
+    }
+
+    response.vehicle = vehicle
+    next()
+}
+
 
 module.exports = router
