@@ -17,9 +17,11 @@ app.use(cors())
 app.use(express.json())
 
 const brandsRouter = require('./routes/brands')
+const searchRouter = require('./routes/search')
 const vehicleRouter = require('./routes/vehicles')
 
 app.use('/brands', brandsRouter)
+app.use('/search', searchRouter)
 app.use('/vehicles', vehicleRouter)
 
 app.use('/images', express.static('images'));
