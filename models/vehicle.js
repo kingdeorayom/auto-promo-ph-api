@@ -5,11 +5,39 @@ const vehicleSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    price: {
+        type: Number,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
     brand: {
         type: String,
         required: true
     },
-    description: {
+    model: {
+        type: String,
+        required: true
+    },
+    type: {
+        type: String,
+        required: true
+    },
+    transmission: {
+        type: String,
+        required: true
+    },
+    fuelType: {
+        type: String,
+        required: true
+    },
+    year: {
+        type: String,
+        required: true
+    },
+    keyFeatures: {
         type: String,
         required: true
     },

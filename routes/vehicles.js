@@ -17,8 +17,15 @@ router.get('/', async (request, response) => {
 router.post('/', async (request, response) => {
     const data = new VehicleModel({
         name: request.body.name,
-        brand: request.body.brand,
+        price: request.body.price,
         description: request.body.description,
+        brand: request.body.brand,
+        model: request.body.model,
+        type: request.body.type,
+        transmission: request.body.transmission,
+        fuelType: request.body.fuelType,
+        year: request.body.year,
+        keyFeatures: request.body.keyFeatures,
         vehicle_slug: request.body.vehicle_slug,
         brand_slug: request.body.brand_slug
     })
