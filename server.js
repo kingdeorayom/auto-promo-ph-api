@@ -22,4 +22,7 @@ const vehicleRouter = require('./routes/vehicles')
 app.use('/brands', brandsRouter)
 app.use('/vehicles', vehicleRouter)
 
+app.use('/images', express.static('images'));
+
+
 app.listen(port, () => console.log(`Server started on port ${port}`))
