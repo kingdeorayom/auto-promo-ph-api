@@ -13,6 +13,21 @@ router.get('/', async (request, response) => {
     }
 })
 
+// Getting featured vehicles
+// router.get('/featured', async (request, response) => {
+//     try {
+//         const vehicle = await VehicleModel.find()
+//         response.json(vehicle)
+//     } catch (error) {
+//         response.status(500).json({ message: error.message })
+//     }
+// })
+
+// Getting featured vehicles
+router.get('/featured', getFeaturedVehicles, (request, response) => {
+    response.json(response.vehicle)
+})
+
 // Creating one vehicle
 router.post('/', async (request, response) => {
     const data = new VehicleModel({
@@ -118,6 +133,23 @@ async function getVehicleBySlug(request, response, next) {
     let vehicle
     try {
         vehicle = await VehicleModel.findOne({ vehicle_slug: request.params.vehicle_slug })
+        if (vehicle == null) {
+            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
+        }
+    } catch (err) {
+        return response.status(500).json({ message: err.message })
+    }
+
+    response.vehicle = vehicle
+    next()
+}
+
+// Get featured vehicles
+async function getFeaturedVehicles(request, response, next) {
+    console.log(request.params)
+    let vehicle
+    try {
+        vehicle = await VehicleModel.aggregate([{ $sample: { size: 4 } }])
         if (vehicle == null) {
             return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
         }
