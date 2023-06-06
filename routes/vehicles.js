@@ -34,6 +34,7 @@ router.post('/', async (request, response) => {
         name: request.body.name,
         price: request.body.price,
         description: request.body.description,
+        image: request.body.image,
         brand: request.body.brand,
         model: request.body.model,
         type: request.body.type,
