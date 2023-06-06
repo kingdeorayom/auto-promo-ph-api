@@ -19,10 +19,12 @@ app.use(express.json())
 const brandsRouter = require('./routes/brands')
 const searchRouter = require('./routes/search')
 const vehicleRouter = require('./routes/vehicles')
+const inquiriesRouter = require('./routes/inquiries')
 
 app.use('/brands', brandsRouter)
 app.use('/search', searchRouter)
 app.use('/vehicles', vehicleRouter)
+app.use('/inquiries', inquiriesRouter)
 
 app.use('/images', express.static('images'));
 
