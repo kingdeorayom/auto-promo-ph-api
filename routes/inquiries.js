@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const moment = require('moment');
 
 const InquiriesModel = require('../models/inquiries')
 
@@ -23,11 +24,15 @@ router.get('/:id', getInquiryById, (request, response) => {
 // Creating one brand
 
 router.post('/', async (request, response) => {
+
+    let date = moment().format('MM-D-YYYY')
+
     const inquiry = new InquiriesModel({
         name: request.body.name,
         email: request.body.email,
         mobileNumber: request.body.mobileNumber,
-        message: request.body.message
+        message: request.body.message,
+        date: date
     })
 
     try {
