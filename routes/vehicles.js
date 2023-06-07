@@ -28,6 +28,11 @@ router.get('/featured', getFeaturedVehicles, (request, response) => {
     response.json(response.vehicle)
 })
 
+// Getting suggested vehicles
+router.get('/suggested/:brand_slug', getSuggestedVehicles, (request, response) => {
+    response.json(response.vehicle)
+})
+
 // Creating one vehicle
 router.post('/', async (request, response) => {
     const data = new VehicleModel({
@@ -114,7 +119,9 @@ router.delete('/:id', getVehicleById, async (request, response) => {
 
 // Get vehicle by id
 async function getVehicleById(request, response, next) {
+
     let vehicle
+
     try {
         vehicle = await VehicleModel.findById(request.params.id)
         if (vehicle == null) {
@@ -130,8 +137,9 @@ async function getVehicleById(request, response, next) {
 
 // Get vehicle by vehicle slug
 async function getVehicleBySlug(request, response, next) {
-    console.log(request.params)
+
     let vehicle
+
     try {
         vehicle = await VehicleModel.findOne({ vehicle_slug: request.params.vehicle_slug })
         if (vehicle == null) {
@@ -147,8 +155,9 @@ async function getVehicleBySlug(request, response, next) {
 
 // Get featured vehicles
 async function getFeaturedVehicles(request, response, next) {
-    console.log(request.params)
+
     let vehicle
+
     try {
         vehicle = await VehicleModel.aggregate([{ $sample: { size: 4 } }])
         if (vehicle == null) {
@@ -161,6 +170,28 @@ async function getFeaturedVehicles(request, response, next) {
     response.vehicle = vehicle
     next()
 }
+
+// Get featured vehicles
+async function getSuggestedVehicles(request, response, next) {
+
+    let vehicle
+
+    try {
+        vehicle = await VehicleModel.aggregate([
+            { $match: { brand_slug: request.params.brand_slug } },
+            { $sample: { size: 4 } }
+        ])
+        if (vehicle == null) {
+            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
+        }
+    } catch (err) {
+        return response.status(500).json({ message: err.message })
+    }
+
+    response.vehicle = vehicle
+    next()
+}
+
 
 
 module.exports = router
