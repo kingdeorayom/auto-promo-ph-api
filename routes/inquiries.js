@@ -25,7 +25,7 @@ router.get('/:id', getInquiryById, (request, response) => {
 
 router.post('/', async (request, response) => {
 
-    let date = moment().format('MM-D-YYYY')
+    let date = moment().format('MMMM Do YYYY')
 
     const inquiry = new InquiriesModel({
         name: request.body.name,
