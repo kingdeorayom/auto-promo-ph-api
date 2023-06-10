@@ -8,8 +8,8 @@ const InquiriesModel = require('../models/inquiries')
 
 router.get('/', async (request, response) => {
     try {
-        const brands = await InquiriesModel.find()
-        response.json(brands)
+        const inquiries = await InquiriesModel.find()
+        response.json(inquiries)
     } catch (error) {
         response.status(500).json({ message: error.message })
     }
@@ -18,10 +18,10 @@ router.get('/', async (request, response) => {
 // Getting one inquiry by id
 
 router.get('/:id', getInquiryById, (request, response) => {
-    response.json(response.brand)
+    response.json(response.inquiry)
 })
 
-// Creating one brand
+// Creating one inquiry
 
 router.post('/', async (request, response) => {
 
@@ -40,6 +40,16 @@ router.post('/', async (request, response) => {
         response.status(201).json(newInquiry)
     } catch (error) {
         response.status(400).json({ message: error.message })
+    }
+})
+
+// Deleting one vehicle by id
+router.delete('/:id', getInquiryById, async (request, response) => {
+    try {
+        await response.inquiry.deleteOne()
+        response.json({ message: 'Successfully deleted inquiry' })
+    } catch (err) {
+        response.status(500).json({ message: err.message })
     }
 })
 
