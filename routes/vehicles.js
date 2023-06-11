@@ -60,7 +60,7 @@ router.post('/', async (request, response) => {
         if (nameExists) {
             response.status(400).json({ message: "There is already a vehicle with this name in the database. Please try another one." })
         } else if (vehicleSlugExists) {
-            response.status(400).json({ message: "There is already a vehicle with this slug in the database. Please try another one." })
+            response.status(400).json({ message: "There is already a vehicle with this URL slug in the database. Slugs are generated based on the name of the vehicle. Try changing the name of the vehicle you're about to add." })
         } else {
             const vehicle = await data.save()
             response.status(201).json(vehicle)
