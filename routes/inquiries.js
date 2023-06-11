@@ -43,7 +43,19 @@ router.post('/', async (request, response) => {
     }
 })
 
-// Deleting one vehicle by id
+// Getting all inquiries
+
+router.delete('/', async (request, response) => {
+    try {
+        const inquiries = await InquiriesModel.deleteMany({})
+        response.json(inquiries)
+    } catch (error) {
+        response.status(500).json({ message: error.message })
+    }
+})
+
+
+// Deleting one inquiry by id
 router.delete('/:id', getInquiryById, async (request, response) => {
     try {
         await response.inquiry.deleteOne()
