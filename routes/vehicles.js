@@ -35,6 +35,7 @@ router.get('/suggested/:brand_slug', getSuggestedVehicles, (request, response) =
 
 // Creating one vehicle
 router.post('/', async (request, response) => {
+
     const data = new VehicleModel({
         name: request.body.name,
         price: request.body.price,
@@ -52,8 +53,19 @@ router.post('/', async (request, response) => {
     })
 
     try {
-        const vehicle = await data.save()
-        response.status(201).json(vehicle)
+
+        const nameExists = await VehicleModel.findOne({ name: request.body.name })
+        const vehicleSlugExists = await VehicleModel.findOne({ vehicle_slug: request.body.vehicle_slug })
+
+        if (nameExists) {
+            response.status(400).json({ message: "There is already a vehicle with this name in the database. Please try another one." })
+        } else if (vehicleSlugExists) {
+            response.status(400).json({ message: "There is already a vehicle with this slug in the database. Please try another one." })
+        } else {
+            const vehicle = await data.save()
+            response.status(201).json(vehicle)
+        }
+
     } catch (error) {
         response.status(400).json({ message: error.message })
     }
