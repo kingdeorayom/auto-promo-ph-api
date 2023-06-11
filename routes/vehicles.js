@@ -107,7 +107,7 @@ router.delete('/:id', getVehicleById, async (request, response) => {
 //     try {
 //         vehicle = await VehicleModel.find({ brand: request.params.brand })
 //         if (vehicle == null) {
-//             return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
+//             return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
 //         }
 //     } catch (err) {
 //         return response.status(500).json({ message: err.message })
@@ -125,7 +125,7 @@ async function getVehicleById(request, response, next) {
     try {
         vehicle = await VehicleModel.findById(request.params.id)
         if (vehicle == null) {
-            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
+            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
         }
     } catch (err) {
         return response.status(500).json({ message: err.message })
@@ -143,7 +143,7 @@ async function getVehicleBySlug(request, response, next) {
     try {
         vehicle = await VehicleModel.findOne({ vehicle_slug: request.params.vehicle_slug })
         if (vehicle == null) {
-            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
+            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
         }
     } catch (err) {
         return response.status(500).json({ message: err.message })
@@ -161,7 +161,7 @@ async function getFeaturedVehicles(request, response, next) {
     try {
         vehicle = await VehicleModel.aggregate([{ $sample: { size: 4 } }])
         if (vehicle == null) {
-            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
+            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
         }
     } catch (err) {
         return response.status(500).json({ message: err.message })
@@ -182,7 +182,7 @@ async function getSuggestedVehicles(request, response, next) {
             { $sample: { size: 4 } }
         ])
         if (vehicle == null) {
-            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database." })
+            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
         }
     } catch (err) {
         return response.status(500).json({ message: err.message })

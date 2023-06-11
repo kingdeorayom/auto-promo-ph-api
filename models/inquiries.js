@@ -21,6 +21,10 @@ const inquiriesSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    vehicleSlug: {
+        type: String,
+        required: true
+    },
     date: {
         type: String,
         required: true

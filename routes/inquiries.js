@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const InquiriesModel = require('../models/inquiries')
+const moment = require('moment')
 
 // Getting all inquiries
 
@@ -30,7 +31,8 @@ router.post('/', async (request, response) => {
         email: request.body.email,
         mobileNumber: request.body.mobileNumber,
         message: request.body.message,
-        date: new Date()
+        vehicleSlug: request.body.vehicleSlug,
+        date: moment().format('M/D/Y hh:mm A')
     })
 
     try {
