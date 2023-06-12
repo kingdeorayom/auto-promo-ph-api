@@ -1,5 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const path = require('path')
+
+const multer = require('multer')
 
 const VehicleModel = require('../models/vehicle')
 
@@ -33,14 +36,29 @@ router.get('/suggested/:brand_slug', getSuggestedVehicles, (request, response) =
     response.json(response.vehicle)
 })
 
+const storageEngine = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './images/vehicles')
+    },
+    filename: (req, file, cb) => {
+        console.log(file)
+        cb(null, "auto-promo-ph-" + Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ storage: storageEngine })
+
 // Creating one vehicle
-router.post('/', async (request, response) => {
+router.post('/', upload.single('image'), async (request, response) => {
+
+    let path = request.file.destination + "/" + request.file.filename
+    const imagePath = path.substring(1)
 
     const data = new VehicleModel({
         name: request.body.name,
         price: request.body.price,
         description: request.body.description,
-        image: request.body.image,
+        image: imagePath,
         brand: request.body.brand,
         model: request.body.model,
         type: request.body.type,
