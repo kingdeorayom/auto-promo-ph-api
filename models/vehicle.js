@@ -48,11 +48,10 @@ const vehicleSchema = new mongoose.Schema({
     colors: {
         type: Array,
         required: true,
-        validate: {
-            validator: function (array) {
-                return array.every((v) => typeof v === 'string');
-            }
-        }
+    },
+    variants: {
+        type: Array,
+        required: false
     },
     vehicle_slug: {
         type: String,

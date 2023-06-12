@@ -67,6 +67,7 @@ router.post('/', upload.single('image'), async (request, response) => {
         year: request.body.year,
         keyFeatures: request.body.keyFeatures,
         colors: request.body.colors,
+        variants: request.body.variants,
         vehicle_slug: request.body.vehicle_slug,
         brand_slug: request.body.brand_slug
     })
