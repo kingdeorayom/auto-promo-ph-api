@@ -66,6 +66,7 @@ router.post('/', upload.single('image'), async (request, response) => {
         fuelType: request.body.fuelType,
         year: request.body.year,
         keyFeatures: request.body.keyFeatures,
+        colors: request.body.colors,
         vehicle_slug: request.body.vehicle_slug,
         brand_slug: request.body.brand_slug
     })
@@ -221,7 +222,5 @@ async function getSuggestedVehicles(request, response, next) {
     response.vehicle = vehicle
     next()
 }
-
-
 
 module.exports = router
