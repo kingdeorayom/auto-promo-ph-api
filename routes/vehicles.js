@@ -17,16 +17,6 @@ router.get('/', async (request, response) => {
 })
 
 // Getting featured vehicles
-// router.get('/featured', async (request, response) => {
-//     try {
-//         const vehicle = await VehicleModel.find()
-//         response.json(vehicle)
-//     } catch (error) {
-//         response.status(500).json({ message: error.message })
-//     }
-// })
-
-// Getting featured vehicles
 router.get('/featured', getFeaturedVehicles, (request, response) => {
     response.json(response.vehicle)
 })
@@ -91,6 +81,40 @@ router.post('/', upload.single('image'), async (request, response) => {
     }
 })
 
+// Updating one vehicle
+router.patch('/:id', upload.single('image'), async (request, response) => {
+
+    let path = request.file.destination + "/" + request.file.filename
+    const imagePath = path.substring(1)
+
+    const data = {
+        name: request.body.name,
+        price: request.body.price,
+        description: request.body.description,
+        image: imagePath,
+        brand: request.body.brand,
+        model: request.body.model,
+        type: request.body.type,
+        transmission: request.body.transmission,
+        fuelType: request.body.fuelType,
+        year: request.body.year,
+        keyFeatures: request.body.keyFeatures,
+        colors: request.body.colors,
+        variants: request.body.variants,
+        vehicle_slug: request.body.vehicle_slug,
+        brand_slug: request.body.brand_slug
+    }
+
+    try {
+
+        const vehicle = await VehicleModel.findByIdAndUpdate(request.params.id, data, { new: true })
+        response.status(200).json(vehicle)
+
+    } catch (error) {
+        response.status(400).json({ message: "Update failed." })
+    }
+})
+
 // Getting one vehicle by id
 router.get('/:id', getVehicleById, (request, response) => {
     response.json(response.vehicle)
@@ -101,20 +125,12 @@ router.get('/detail/:vehicle_slug', getVehicleBySlug, (request, response) => {
     response.json(response.vehicle)
 })
 
-// Updating one vehicle by id
-router.patch('/:id', getVehicleById, async (request, response) => {
-
-    if (request.body.name != null) {
-        response.vehicle.name = request.body.name
-    }
-
-    try {
-        const updatedVehicle = await response.vehicle.save()
-        response.json(updatedVehicle)
-    } catch (err) {
-        response.status(400).json({ message: err.message })
-    }
+// Getting one vehicle by vehicle slug
+router.get('/variant/detail/', getVariantsBySlug, (request, response) => {
+    response.json(response.vehicle)
 })
+
+
 
 // Deleting one vehicle by id
 router.delete('/:id', getVehicleById, async (request, response) => {
@@ -125,29 +141,6 @@ router.delete('/:id', getVehicleById, async (request, response) => {
         response.status(500).json({ message: err.message })
     }
 })
-
-// // Getting vehicles by brand
-// router.get('/:brand', getVehicleByBrand, (request, response) => {
-//     response.json(response.vehicle)
-// })
-
-// Middleware
-
-// Get vehicle by brand
-// async function getVehicleByBrand(request, response, next) {
-//     let vehicle
-//     try {
-//         vehicle = await VehicleModel.find({ brand: request.params.brand })
-//         if (vehicle == null) {
-//             return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
-//         }
-//     } catch (err) {
-//         return response.status(500).json({ message: err.message })
-//     }
-
-//     response.vehicle = vehicle
-//     next()
-// }
 
 // Get vehicle by id
 async function getVehicleById(request, response, next) {
@@ -174,6 +167,28 @@ async function getVehicleBySlug(request, response, next) {
 
     try {
         vehicle = await VehicleModel.findOne({ vehicle_slug: request.params.vehicle_slug })
+        if (vehicle == null) {
+            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
+        }
+    } catch (err) {
+        return response.status(500).json({ message: err.message })
+    }
+
+    response.vehicle = vehicle
+    next()
+}
+
+// Get variants by vehicle slug
+async function getVariantsBySlug(request, response, next) {
+
+    let vehicle
+
+    // const slugs = ['suzuki-swift', 'toyota-corolla']
+
+    console.log(request.query.vehicleSlug)
+
+    try {
+        vehicle = await VehicleModel.find({ vehicle_slug: request.query.vehicleSlug })
         if (vehicle == null) {
             return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
         }
