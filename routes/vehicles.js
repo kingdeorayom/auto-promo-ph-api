@@ -190,7 +190,7 @@ async function getVariantsBySlug(request, response, next) {
     try {
         vehicle = await VehicleModel.find({ vehicle_slug: request.query.vehicleSlug })
         if (vehicle == null) {
-            return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
+            return response.status(404).json({ message: "Cannot find vehicle variants. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
         }
     } catch (err) {
         return response.status(500).json({ message: err.message })
