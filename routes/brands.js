@@ -21,6 +21,12 @@ router.get('/:id', getBrandById, (request, response) => {
     response.json(response.brand)
 })
 
+// Getting one brand by brand slug
+
+router.get('/get/slug/:brand_slug', getBrandBySlug, (request, response) => {
+    response.json(response.brand)
+})
+
 // Getting all vehicles by slug
 router.get('/vehicle/:brand_slug', getVehicleByBrandSlug, (request, response) => {
     response.json(response.vehicle)
@@ -58,6 +64,26 @@ async function getBrandById(request, response, next) {
         }
     } catch (error) {
         return response.status(500).json({ message: error.message })
+    }
+
+    response.brand = brand
+    next()
+}
+
+// Get brand by id
+async function getBrandBySlug(request, response, next) {
+
+    let brand
+
+    console.log(request.params.brand_slug)
+
+    try {
+        brand = await BrandModel.findOne({ slug: request.params.brand_slug })
+        if (brand == null) {
+            return response.status(404).json({ message: "Cannot find brand. It may not be existing in the database." })
+        }
+    } catch (err) {
+        return response.status(500).json({ message: err.message })
     }
 
     response.brand = brand
