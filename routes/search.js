@@ -5,17 +5,35 @@ const VehicleModel = require('../models/vehicle')
 
 router.get('/:keyword', async (request, response) => {
 
-    let data = await VehicleModel.find({
+    try {
+        let data = await VehicleModel.find({
 
-        "$or": [
-            { name: { $regex: request.params.keyword, $options: 'i' } },
-            { brand: { $regex: request.params.keyword, $options: 'i' } },
-            { model: { $regex: request.params.keyword, $options: 'i' } },
-            { type: { $regex: request.params.keyword, $options: 'i' } },
-        ]
-    })
+            "$or": [
+                { name: { $regex: request.params.keyword, $options: 'i' } },
+                { brand: { $regex: request.params.keyword, $options: 'i' } },
+                { model: { $regex: request.params.keyword, $options: 'i' } },
+                { type: { $regex: request.params.keyword, $options: 'i' } }
+            ]
+        })
 
-    response.send(data)
+        response.send(data)
+    } catch (error) {
+        response.status(500).json({ message: error.message })
+    }
+
+})
+
+router.get('/budget/:keyword', async (request, response) => {
+
+    try {
+        let data = await VehicleModel.find({
+            price: { $lte: request.params.keyword }
+        })
+
+        response.send(data)
+    } catch (error) {
+        response.status(500).json({ message: error.message })
+    }
 
 })
 

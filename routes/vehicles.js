@@ -206,7 +206,7 @@ async function getFeaturedVehicles(request, response, next) {
     let vehicle
 
     try {
-        vehicle = await VehicleModel.aggregate([{ $sample: { size: 4 } }])
+        vehicle = await VehicleModel.aggregate([{ $sample: { size: 10 } }])
         if (vehicle == null) {
             return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
         }
