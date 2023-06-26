@@ -9,6 +9,10 @@ const vehicleSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    netPrice: {
+        type: Number,
+        required: true
+    },
     description: {
         type: String,
         required: true
@@ -35,6 +39,14 @@ const vehicleSchema = new mongoose.Schema({
     },
     fuelType: {
         type: String,
+        required: true
+    },
+    power: {
+        type: Number,
+        required: true
+    },
+    engineDisplacement: {
+        type: Number,
         required: true
     },
     year: {

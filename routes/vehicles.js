@@ -47,6 +47,7 @@ router.post('/', upload.single('image'), async (request, response) => {
     const data = new VehicleModel({
         name: request.body.name,
         price: request.body.price,
+        netPrice: request.body.netPrice,
         description: request.body.description,
         image: imagePath,
         brand: request.body.brand,
@@ -54,6 +55,8 @@ router.post('/', upload.single('image'), async (request, response) => {
         type: request.body.type,
         transmission: request.body.transmission,
         fuelType: request.body.fuelType,
+        power: request.body.power,
+        engineDisplacement: request.body.engineDisplacement,
         year: request.body.year,
         keyFeatures: request.body.keyFeatures,
         colors: request.body.colors,
@@ -90,6 +93,7 @@ router.patch('/:id', upload.single('image'), async (request, response) => {
     const data = {
         name: request.body.name,
         price: request.body.price,
+        netPrice: request.body.netPrice,
         description: request.body.description,
         image: imagePath,
         brand: request.body.brand,
@@ -97,6 +101,8 @@ router.patch('/:id', upload.single('image'), async (request, response) => {
         type: request.body.type,
         transmission: request.body.transmission,
         fuelType: request.body.fuelType,
+        power: request.body.power,
+        engineDisplacement: request.body.engineDisplacement,
         year: request.body.year,
         keyFeatures: request.body.keyFeatures,
         colors: request.body.colors,
