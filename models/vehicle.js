@@ -21,6 +21,10 @@ const vehicleSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    extraImages: {
+        type: Array,
+        required: true
+    },
     brand: {
         type: String,
         required: true

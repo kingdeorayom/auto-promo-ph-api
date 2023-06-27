@@ -31,25 +31,31 @@ const storageEngine = multer.diskStorage({
         cb(null, './images/vehicles')
     },
     filename: (req, file, cb) => {
-        console.log(file)
+        // console.log(file)
         cb(null, "auto-promo-ph-" + Date.now() + path.extname(file.originalname))
     }
 })
 
 const upload = multer({ storage: storageEngine })
 
-// Creating one vehicle
-router.post('/', upload.single('image'), async (request, response) => {
+var multipleUpload = upload.fields([{ name: 'image' }, { name: 'extraImages[]' }])
 
-    let path = request.file.destination + "/" + request.file.filename
-    const imagePath = path.substring(1)
+// Creating one vehicle
+router.post('/', multipleUpload, async (request, response) => {
+
+    const mainImagePath = request.files.image[0].destination.substring(1) + "/" + request.files.image[0].filename
+
+    const extraImagesPath = request.files['extraImages[]'].map((item) => {
+        return item.destination.substring(1) + "/" + item.filename
+    })
 
     const data = new VehicleModel({
         name: request.body.name,
         price: request.body.price,
         netPrice: request.body.netPrice,
         description: request.body.description,
-        image: imagePath,
+        image: mainImagePath,
+        extraImages: extraImagesPath,
         brand: request.body.brand,
         model: request.body.model,
         type: request.body.type,
