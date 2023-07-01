@@ -238,7 +238,7 @@ async function getSuggestedVehicles(request, response, next) {
     try {
         vehicle = await VehicleModel.aggregate([
             { $match: { brand_slug: request.params.brand_slug } },
-            { $sample: { size: 4 } }
+            { $sample: { size: 10 } }
         ])
         if (vehicle == null) {
             return response.status(404).json({ message: "Cannot find vehicle. It may not be existing in the database, or there's an error that still needs to be fixed. If the issue persists, please report it immediately." })
