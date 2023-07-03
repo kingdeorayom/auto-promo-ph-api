@@ -13,6 +13,14 @@ const vehicleSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    downpayment: {
+        type: Number,
+        required: true
+    },
+    amortization: {
+        type: Number,
+        required: true
+    },
     description: {
         type: String,
         required: true

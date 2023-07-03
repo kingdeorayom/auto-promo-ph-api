@@ -53,6 +53,8 @@ router.post('/', multipleUpload, async (request, response) => {
         name: request.body.name,
         price: request.body.price,
         netPrice: request.body.netPrice,
+        downpayment: request.body.downpayment,
+        amortization: request.body.amortization,
         description: request.body.description,
         image: mainImagePath,
         extraImages: extraImagesPath,
