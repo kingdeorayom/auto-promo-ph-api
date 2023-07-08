@@ -95,39 +95,49 @@ router.post('/', multipleUpload, async (request, response) => {
 // Updating one vehicle
 router.patch('/:id', multipleUpload, async (request, response) => {
 
-    const mainImagePath = request.files.image[0].destination.substring(1) + "/" + request.files.image[0].filename
-
-    const extraImagesPath = request.files['extraImages[]'].map((item) => {
-        return item.destination.substring(1) + "/" + item.filename
-    })
-
-    const data = new VehicleModel({
-        name: request.body.name,
-        price: request.body.price,
-        netPrice: request.body.netPrice,
-        downpayment: request.body.downpayment,
-        amortization: request.body.amortization,
-        description: request.body.description,
-        image: mainImagePath,
-        extraImages: extraImagesPath,
-        brand: request.body.brand,
-        model: request.body.model,
-        type: request.body.type,
-        transmission: request.body.transmission,
-        fuelType: request.body.fuelType,
-        power: request.body.power,
-        engineDisplacement: request.body.engineDisplacement,
-        year: request.body.year,
-        keyFeatures: request.body.keyFeatures,
-        colors: request.body.colors,
-        variants: request.body.variants,
-        vehicle_slug: request.body.vehicle_slug,
-        brand_slug: request.body.brand_slug
-    })
+    let mainImagePath
+    let extraImagesPath
 
     try {
+        mainImagePath = request.files.image[0].destination.substring(1) + "/" + request.files.image[0].filename
+        extraImagesPath = request.files['extraImages[]'].map((item) => {
+            return item.destination.substring(1) + "/" + item.filename
+        })
+    } catch (error) {
+        response.status(400).json({ message: "Update error. All Vehicle Images are required." })
+    }
 
-        const vehicle = await VehicleModel.findByIdAndUpdate(request.params.id, data, { new: true })
+    try {
+        const vehicle = await VehicleModel.updateOne(
+            {
+                "_id": request.params.id
+            },
+            {
+                $set: {
+                    name: request.body.name,
+                    price: request.body.price,
+                    netPrice: request.body.netPrice,
+                    downpayment: request.body.downpayment,
+                    amortization: request.body.amortization,
+                    description: request.body.description,
+                    image: mainImagePath,
+                    extraImages: extraImagesPath,
+                    brand: request.body.brand,
+                    model: request.body.model,
+                    type: request.body.type,
+                    transmission: request.body.transmission,
+                    fuelType: request.body.fuelType,
+                    power: request.body.power,
+                    engineDisplacement: request.body.engineDisplacement,
+                    year: request.body.year,
+                    keyFeatures: request.body.keyFeatures,
+                    colors: request.body.colors,
+                    variants: request.body.variants,
+                    vehicle_slug: request.body.vehicle_slug,
+                    brand_slug: request.body.brand_slug
+                }
+            }
+        )
         response.status(200).json(vehicle)
 
     } catch (error) {
