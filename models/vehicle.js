@@ -41,7 +41,7 @@ const vehicleSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    type: {
+    bodyType: {
         type: String,
         required: true
     },
@@ -65,10 +65,10 @@ const vehicleSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    keyFeatures: {
-        type: String,
-        required: true
-    },
+    // keyFeatures: {
+    //     type: String,
+    //     required: true
+    // },
     colors: {
         type: Array,
         required: true,

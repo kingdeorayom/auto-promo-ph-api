@@ -12,7 +12,7 @@ router.get('/:keyword', async (request, response) => {
                 { name: { $regex: request.params.keyword, $options: 'i' } },
                 { brand: { $regex: request.params.keyword, $options: 'i' } },
                 { model: { $regex: request.params.keyword, $options: 'i' } },
-                { type: { $regex: request.params.keyword, $options: 'i' } }
+                { bodyType: { $regex: request.params.keyword, $options: 'i' } }
             ]
         })
 
