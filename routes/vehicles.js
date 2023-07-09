@@ -45,25 +45,16 @@ router.get('/suggested/:brand_slug', getSuggestedVehicles, (request, response) =
     response.json(response.vehicle)
 })
 
-const storageEngine = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './images/vehicles')
-    },
-    filename: (req, file, cb) => {
-        // console.log(file)
-        cb(null, "auto-promo-ph-" + Date.now() + path.extname(file.originalname))
-    }
-})
-
 const upload = multer({ storage: multer.memoryStorage() })
 
-var multipleUpload = upload.fields([{ name: 'image' }, { name: 'extraImages[]' }])
+var multipleUpload = upload.fields([{ name: 'colors[]' }, { name: 'image' }, { name: 'extraImages[]' }])
 
 // Creating one vehicle
 router.post('/', multipleUpload, async (request, response) => {
 
     let mainImageURL
     let extraImagesURL
+    let colorsURL
 
     try {
         const mainImageStorageRef = ref(storage, `files/auto-promo-ph-${Date.now()}-${request.files.image[0].originalname}`);
@@ -78,9 +69,22 @@ router.post('/', multipleUpload, async (request, response) => {
 
         extraImagesURL = await Promise.all(request.files['extraImages[]'].map(async (item) => {
             const extraImagesStorageRef = ref(storage, `files/auto-promo-ph-${Date.now()}-${item.originalname}`);
-            const extraImagesMetaData = { contentType: request.files.image[0].mimetype };
+            const extraImagesMetaData = { contentType: item.mimetype };
             const extraImagesSnapshot = await uploadBytesResumable(extraImagesStorageRef, item.buffer, extraImagesMetaData);
             return await getDownloadURL(extraImagesSnapshot.ref)
+        }))
+
+    } catch (error) {
+        response.status(400).json({ message: error.message })
+    }
+
+    try {
+
+        colorsURL = await Promise.all(request.files['colors[]'].map(async (item) => {
+            const colorsStorageRef = ref(storage, `files/auto-promo-ph-${Date.now()}-${item.originalname}`);
+            const colorsMetaData = { contentType: item.mimetype };
+            const colorsSnapshot = await uploadBytesResumable(colorsStorageRef, item.buffer, colorsMetaData);
+            return await getDownloadURL(colorsSnapshot.ref)
         }))
 
     } catch (error) {
@@ -105,7 +109,7 @@ router.post('/', multipleUpload, async (request, response) => {
         engineDisplacement: request.body.engineDisplacement,
         year: request.body.year,
         keyFeatures: request.body.keyFeatures,
-        colors: request.body.colors,
+        colors: colorsURL,
         variants: request.body.variants,
         vehicle_slug: request.body.vehicle_slug,
         brand_slug: request.body.brand_slug
