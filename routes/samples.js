@@ -1,18 +1,20 @@
+require('dotenv').config()
+
 const express = require('express')
 const router = express.Router()
 const multer = require('multer')
 
 const firebase = require("firebase/app");
-const { getStorage, ref, uploadBytes, uploadBytesResumable, getDownloadURL } = require("firebase/storage");
+const { getStorage, ref, uploadBytesResumable, getDownloadURL } = require("firebase/storage");
 
 const firebaseConfig = {
-    apiKey: "AIzaSyACOosHqRNNl_mvGJkVF01AEAwjX2PcgRY",
-    authDomain: "auto-promo-ph-api.firebaseapp.com",
-    projectId: "auto-promo-ph-api",
-    storageBucket: "auto-promo-ph-api.appspot.com",
-    messagingSenderId: "594783862675",
-    appId: "1:594783862675:web:3fb6894b83486a3ef8b266",
-    measurementId: "G-P2S0140CFC"
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -31,7 +33,7 @@ router.post("/", upload.single("filename"), async (req, res) => {
 
         const dateTime = Date.now();
 
-        const storageRef = ref(storage, `files/${req.file.originalname + "-" + dateTime}`);
+        const storageRef = ref(storage, `files/auto-promo-ph-${dateTime}-${req.file.originalname}`);
 
         // Create file metadata including the content type
         const metadata = {

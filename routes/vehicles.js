@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express')
 const router = express.Router()
 const path = require('path')
@@ -5,6 +7,23 @@ const path = require('path')
 const multer = require('multer')
 
 const VehicleModel = require('../models/vehicle')
+
+const firebase = require("firebase/app");
+const { getStorage, ref, uploadBytesResumable, getDownloadURL } = require("firebase/storage");
+
+const firebaseConfig = {
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const storage = getStorage();
 
 // Getting all vehicle
 router.get('/', async (request, response) => {
@@ -36,18 +55,37 @@ const storageEngine = multer.diskStorage({
     }
 })
 
-const upload = multer({ storage: storageEngine })
+const upload = multer({ storage: multer.memoryStorage() })
 
 var multipleUpload = upload.fields([{ name: 'image' }, { name: 'extraImages[]' }])
 
 // Creating one vehicle
 router.post('/', multipleUpload, async (request, response) => {
 
-    const mainImagePath = request.files.image[0].destination.substring(1) + "/" + request.files.image[0].filename
+    let mainImageURL
+    let extraImagesURL
 
-    const extraImagesPath = request.files['extraImages[]'].map((item) => {
-        return item.destination.substring(1) + "/" + item.filename
-    })
+    try {
+        const mainImageStorageRef = ref(storage, `files/auto-promo-ph-${Date.now()}-${request.files.image[0].originalname}`);
+        const mainImageMetadata = { contentType: request.files.image[0].mimetype };
+        const mainImageSnapshot = await uploadBytesResumable(mainImageStorageRef, request.files.image[0].buffer, mainImageMetadata);
+        mainImageURL = await getDownloadURL(mainImageSnapshot.ref);
+    } catch (error) {
+        response.status(400).json({ message: error.message })
+    }
+
+    try {
+
+        extraImagesURL = await Promise.all(request.files['extraImages[]'].map(async (item) => {
+            const extraImagesStorageRef = ref(storage, `files/auto-promo-ph-${Date.now()}-${item.originalname}`);
+            const extraImagesMetaData = { contentType: request.files.image[0].mimetype };
+            const extraImagesSnapshot = await uploadBytesResumable(extraImagesStorageRef, item.buffer, extraImagesMetaData);
+            return await getDownloadURL(extraImagesSnapshot.ref)
+        }))
+
+    } catch (error) {
+        response.status(400).json({ message: error.message })
+    }
 
     const data = new VehicleModel({
         name: request.body.name,
@@ -56,8 +94,8 @@ router.post('/', multipleUpload, async (request, response) => {
         downpayment: request.body.downpayment,
         amortization: request.body.amortization,
         description: request.body.description,
-        image: mainImagePath,
-        extraImages: extraImagesPath,
+        image: mainImageURL,
+        extraImages: extraImagesURL,
         brand: request.body.brand,
         model: request.body.model,
         type: request.body.type,
