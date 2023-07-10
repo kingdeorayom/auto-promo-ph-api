@@ -30,7 +30,6 @@ router.get('/get/slug/:brand_slug', getBrandBySlug, (request, response) => {
 // Getting all vehicles by slug
 router.get('/vehicle/:brand_slug', getVehicleByBrandSlug, (request, response) => {
     response.json(response.vehicle)
-    // console.log(response.json())
 })
 
 
@@ -70,12 +69,11 @@ async function getBrandById(request, response, next) {
     next()
 }
 
-// Get brand by id
+// Get brand by slug
+
 async function getBrandBySlug(request, response, next) {
 
     let brand
-
-    console.log(request.params.brand_slug)
 
     try {
         brand = await BrandModel.findOne({ slug: request.params.brand_slug })
@@ -90,10 +88,12 @@ async function getBrandBySlug(request, response, next) {
     next()
 }
 
-// Get vehicle by brand
+// Get vehicle by  slug
+
 async function getVehicleByBrandSlug(request, response, next) {
-    console.log(request.params)
+
     let vehicle
+
     try {
         vehicle = await VehicleModel.find({ brand_slug: request.params.brand_slug })
         if (vehicle == null) {

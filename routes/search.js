@@ -27,7 +27,7 @@ router.get('/budget/:keyword', async (request, response) => {
 
     try {
         let data = await VehicleModel.find({
-            price: { $lte: request.params.keyword }
+            unitPrice: { $lte: request.params.keyword }
         })
 
         response.send(data)

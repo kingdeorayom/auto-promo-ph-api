@@ -93,7 +93,7 @@ router.post('/', multipleUpload, async (request, response) => {
 
     const data = new VehicleModel({
         name: request.body.name,
-        price: request.body.price,
+        unitPrice: request.body.unitPrice,
         netPrice: request.body.netPrice,
         downpayment: request.body.downpayment,
         amortization: request.body.amortization,
@@ -105,10 +105,7 @@ router.post('/', multipleUpload, async (request, response) => {
         bodyType: request.body.bodyType,
         transmission: request.body.transmission,
         fuelType: request.body.fuelType,
-        power: request.body.power,
-        engineDisplacement: request.body.engineDisplacement,
         year: request.body.year,
-        // keyFeatures: request.body.keyFeatures,
         colors: colorsURL,
         variants: request.body.variants,
         vehicle_slug: request.body.vehicle_slug,
@@ -157,7 +154,7 @@ router.patch('/:id', multipleUpload, async (request, response) => {
             {
                 $set: {
                     name: request.body.name,
-                    price: request.body.price,
+                    unitPrice: request.body.unitPrice,
                     netPrice: request.body.netPrice,
                     downpayment: request.body.downpayment,
                     amortization: request.body.amortization,
@@ -172,7 +169,6 @@ router.patch('/:id', multipleUpload, async (request, response) => {
                     power: request.body.power,
                     engineDisplacement: request.body.engineDisplacement,
                     year: request.body.year,
-                    // keyFeatures: request.body.keyFeatures,
                     colors: request.body.colors,
                     variants: request.body.variants,
                     vehicle_slug: request.body.vehicle_slug,
@@ -256,13 +252,10 @@ async function getVehicleBySlug(request, response, next) {
 }
 
 // Get variants by vehicle slug
+
 async function getVariantsBySlug(request, response, next) {
 
     let vehicle
-
-    // const slugs = ['suzuki-swift', 'toyota-corolla']
-
-    console.log(request.query.vehicleSlug)
 
     try {
         vehicle = await VehicleModel.find({ vehicle_slug: request.query.vehicleSlug })

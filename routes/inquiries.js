@@ -56,6 +56,7 @@ router.delete('/', async (request, response) => {
 
 
 // Deleting one inquiry by id
+
 router.delete('/:id', getInquiryById, async (request, response) => {
     try {
         await response.inquiry.deleteOne()
@@ -68,6 +69,7 @@ router.delete('/:id', getInquiryById, async (request, response) => {
 // Middleware
 
 // Get inquiry by id
+
 async function getInquiryById(request, response, next) {
     let inquiry
 
