@@ -88,28 +88,81 @@ router.post('/', multipleUpload, async (request, response) => {
         }))
 
     } catch (error) {
-        response.status(400).json({ message: error.message })
+        response.status(400).json({ message: "Vehicle colors are required" })
     }
 
     const data = new VehicleModel({
+
         name: request.body.name,
+        description: request.body.description,
+        brand: request.body.brand,
+        model: request.body.model,
+        bodyType: request.body.bodyType,
+        fuelType: request.body.fuelType,
+        year: request.body.year,
+        image: mainImageURL,
+        extraImages: extraImagesURL,
+
         unitPrice: request.body.unitPrice,
         netPrice: request.body.netPrice,
         downpayment: request.body.downpayment,
         amortization: request.body.amortization,
-        description: request.body.description,
-        image: mainImageURL,
-        extraImages: extraImagesURL,
-        brand: request.body.brand,
-        model: request.body.model,
-        bodyType: request.body.bodyType,
-        transmission: request.body.transmission,
-        fuelType: request.body.fuelType,
-        year: request.body.year,
+
+        overallLength: request.body.overallLength,
+        overallWidth: request.body.overallWidth,
+        overallHeight: request.body.overallHeight,
+        wheelbase: request.body.wheelbase,
+        tread: request.body.tread,
+        minimumTurningRadius: request.body.minimumTurningRadius,
+        minimumGroundClearance: request.body.minimumGroundClearance,
+        approachAngle: request.body.approachAngle,
+        rampBreakoverAngle: request.body.rampBreakoverAngle,
+        departureAngle: request.body.departureAngle,
+
+        numberOfCylinders: request.body.numberOfCylinders,
+        numberOfValves: request.body.numberOfValves,
+        pistonDisplacement: request.body.pistonDisplacement,
+        maximumOutput: request.body.maximumOutput,
+        maximumTorque: request.body.maximumTorque,
+
+        transmissionType: request.body.transmissionType,
+        driveSystem: request.body.driveSystem,
+
+        steering: request.body.steering,
+        brakes: request.body.brakes,
+        suspension: request.body.suspension,
+        tyres: request.body.tyres,
+
+        seatingCapacity: request.body.seatingCapacity,
+        luggageCapacity: request.body.luggageCapacity,
+        fuelTankCapacity: request.body.fuelTankCapacity,
+
+        kerbWeight: request.body.kerbWeight,
+        grossWeight: request.body.grossWeight,
+
         colors: colorsURL,
         variants: request.body.variants,
         vehicle_slug: request.body.vehicle_slug,
         brand_slug: request.body.brand_slug
+
+        // name: request.body.name,
+        // unitPrice: request.body.unitPrice,
+        // netPrice: request.body.netPrice,
+        // downpayment: request.body.downpayment,
+        // amortization: request.body.amortization,
+        // description: request.body.description,
+        // image: mainImageURL,
+        // extraImages: extraImagesURL,
+        // brand: request.body.brand,
+        // model: request.body.model,
+        // bodyType: request.body.bodyType,
+        // transmission: request.body.transmission,
+        // fuelType: request.body.fuelType,
+        // year: request.body.year,
+        // colors: colorsURL,
+        // variants: request.body.variants,
+        // vehicle_slug: request.body.vehicle_slug,
+        // brand_slug: request.body.brand_slug
     })
 
     try {
@@ -127,6 +180,7 @@ router.post('/', multipleUpload, async (request, response) => {
         }
 
     } catch (error) {
+        console.log(error)
         response.status(400).json({ message: error.message })
     }
 })
