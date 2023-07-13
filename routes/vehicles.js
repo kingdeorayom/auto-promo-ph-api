@@ -57,99 +57,6 @@ router.post('/', multipleUpload, async (request, response) => {
     let colorsURL
 
     try {
-        // const mainImageStorageRef = ref(storage, `files/main-image-${request.body.vehicleSlug}-${request.files.image[0].originalname}`);
-        const mainImageStorageRef = ref(storage, `files/main-image-${request.body.vehicleSlug}-${request.files.image[0].originalname}`);
-        const mainImageMetadata = { contentType: request.files.image[0].mimetype };
-        const mainImageSnapshot = await uploadBytesResumable(mainImageStorageRef, request.files.image[0].buffer, mainImageMetadata);
-        mainImageURL = await getDownloadURL(mainImageSnapshot.ref);
-    } catch (error) {
-        response.status(400).json({ message: error.message })
-    }
-
-    try {
-
-        extraImagesURL = await Promise.all(request.files['extraImages[]'].map(async (item, index) => {
-            const extraImagesStorageRef = ref(storage, `files/extra-image-${index}-${request.body.vehicleSlug}`);
-            // const extraImagesStorageRef = ref(storage, `files/extra-image-${request.body.vehicleSlug}-${item.originalname}`);
-            const extraImagesMetaData = { contentType: item.mimetype };
-            const extraImagesSnapshot = await uploadBytesResumable(extraImagesStorageRef, item.buffer, extraImagesMetaData);
-            return await getDownloadURL(extraImagesSnapshot.ref)
-        }))
-
-    } catch (error) {
-        response.status(400).json({ message: error.message })
-    }
-
-    try {
-
-        colorsURL = await Promise.all(request.files['colors[]'].map(async (item, index) => {
-            // const colorsStorageRef = ref(storage, `files/color-${request.body.vehicleSlug}-${item.originalname}`);
-            const colorsStorageRef = ref(storage, `files/color-${index}-${request.body.vehicleSlug}`);
-            const colorsMetaData = { contentType: item.mimetype };
-            const colorsSnapshot = await uploadBytesResumable(colorsStorageRef, item.buffer, colorsMetaData);
-            return await getDownloadURL(colorsSnapshot.ref)
-        }))
-
-    } catch (error) {
-        response.status(400).json({ message: "Vehicle colors are required" })
-    }
-
-    const data = new VehicleModel({
-
-        name: request.body.name,
-        description: request.body.description,
-        brand: request.body.brand,
-        model: request.body.model,
-        bodyType: request.body.bodyType,
-        fuelType: request.body.fuelType,
-        year: request.body.year,
-        image: mainImageURL,
-        extraImages: extraImagesURL,
-
-        unitPrice: request.body.unitPrice,
-        netPrice: request.body.netPrice,
-        downpayment: request.body.downpayment,
-        amortization: request.body.amortization,
-
-        overallLength: request.body.overallLength,
-        overallWidth: request.body.overallWidth,
-        overallHeight: request.body.overallHeight,
-        wheelbase: request.body.wheelbase,
-        tread: request.body.tread,
-        minimumTurningRadius: request.body.minimumTurningRadius,
-        minimumGroundClearance: request.body.minimumGroundClearance,
-        approachAngle: request.body.approachAngle,
-        rampBreakoverAngle: request.body.rampBreakoverAngle,
-        departureAngle: request.body.departureAngle,
-
-        numberOfCylinders: request.body.numberOfCylinders,
-        numberOfValves: request.body.numberOfValves,
-        pistonDisplacement: request.body.pistonDisplacement,
-        maximumOutput: request.body.maximumOutput,
-        maximumTorque: request.body.maximumTorque,
-
-        transmissionType: request.body.transmissionType,
-        driveSystem: request.body.driveSystem,
-
-        steering: request.body.steering,
-        brakes: request.body.brakes,
-        suspension: request.body.suspension,
-        tyres: request.body.tyres,
-
-        seatingCapacity: request.body.seatingCapacity,
-        luggageCapacity: request.body.luggageCapacity,
-        fuelTankCapacity: request.body.fuelTankCapacity,
-
-        kerbWeight: request.body.kerbWeight,
-        grossWeight: request.body.grossWeight,
-
-        colors: colorsURL,
-        variants: request.body.variants,
-        vehicle_slug: request.body.vehicle_slug,
-        brand_slug: request.body.brand_slug
-    })
-
-    try {
 
         const nameExists = await VehicleModel.findOne({ name: request.body.name })
         const vehicleSlugExists = await VehicleModel.findOne({ vehicle_slug: request.body.vehicle_slug })
@@ -159,6 +66,98 @@ router.post('/', multipleUpload, async (request, response) => {
         } else if (vehicleSlugExists) {
             response.status(400).json({ message: "There is already a vehicle with this URL slug in the database. Slugs are generated based on the name of the vehicle. Try changing the name of the vehicle you're about to add." })
         } else {
+
+            try {
+                const fileExtension = request.files.image[0].mimetype.substr(request.files.image[0].mimetype.indexOf('/') + 1)
+                const mainImageStorageRef = ref(storage, `files/${request.body.vehicle_slug}-main-image.${fileExtension}`);
+                const mainImageMetadata = { contentType: request.files.image[0].mimetype };
+                const mainImageSnapshot = await uploadBytesResumable(mainImageStorageRef, request.files.image[0].buffer, mainImageMetadata);
+                mainImageURL = await getDownloadURL(mainImageSnapshot.ref);
+            } catch (error) {
+                response.status(400).json({ message: error.message })
+            }
+
+            try {
+                extraImagesURL = await Promise.all(request.files['extraImages[]'].map(async (item, index) => {
+                    let fileExtension = item.mimetype.substr(item.mimetype.indexOf('/') + 1)
+                    const extraImagesStorageRef = ref(storage, `files/${request.body.vehicle_slug}-extra-image-${index}.${fileExtension}`);
+                    const extraImagesMetaData = { contentType: item.mimetype };
+                    const extraImagesSnapshot = await uploadBytesResumable(extraImagesStorageRef, item.buffer, extraImagesMetaData);
+                    return await getDownloadURL(extraImagesSnapshot.ref)
+                }))
+
+            } catch (error) {
+                response.status(400).json({ message: error.message })
+            }
+
+            try {
+                colorsURL = await Promise.all(request.files['colors[]'].map(async (item, index) => {
+                    let fileExtension = item.mimetype.substr(item.mimetype.indexOf('/') + 1)
+                    const colorsStorageRef = ref(storage, `files/${request.body.vehicle_slug}-color-${index}.${fileExtension}`);
+                    const colorsMetaData = { contentType: item.mimetype };
+                    const colorsSnapshot = await uploadBytesResumable(colorsStorageRef, item.buffer, colorsMetaData);
+                    return await getDownloadURL(colorsSnapshot.ref)
+                }))
+
+            } catch (error) {
+                response.status(400).json({ message: "Vehicle colors are required" })
+            }
+
+            const data = new VehicleModel({
+
+                name: request.body.name,
+                description: request.body.description,
+                brand: request.body.brand,
+                model: request.body.model,
+                bodyType: request.body.bodyType,
+                fuelType: request.body.fuelType,
+                year: request.body.year,
+                image: mainImageURL,
+                extraImages: extraImagesURL,
+
+                unitPrice: request.body.unitPrice,
+                netPrice: request.body.netPrice,
+                downpayment: request.body.downpayment,
+                amortization: request.body.amortization,
+
+                overallLength: request.body.overallLength,
+                overallWidth: request.body.overallWidth,
+                overallHeight: request.body.overallHeight,
+                wheelbase: request.body.wheelbase,
+                tread: request.body.tread,
+                minimumTurningRadius: request.body.minimumTurningRadius,
+                minimumGroundClearance: request.body.minimumGroundClearance,
+                approachAngle: request.body.approachAngle,
+                rampBreakoverAngle: request.body.rampBreakoverAngle,
+                departureAngle: request.body.departureAngle,
+
+                numberOfCylinders: request.body.numberOfCylinders,
+                numberOfValves: request.body.numberOfValves,
+                pistonDisplacement: request.body.pistonDisplacement,
+                maximumOutput: request.body.maximumOutput,
+                maximumTorque: request.body.maximumTorque,
+
+                transmissionType: request.body.transmissionType,
+                driveSystem: request.body.driveSystem,
+
+                steering: request.body.steering,
+                brakes: request.body.brakes,
+                suspension: request.body.suspension,
+                tyres: request.body.tyres,
+
+                seatingCapacity: request.body.seatingCapacity,
+                luggageCapacity: request.body.luggageCapacity,
+                fuelTankCapacity: request.body.fuelTankCapacity,
+
+                kerbWeight: request.body.kerbWeight,
+                grossWeight: request.body.grossWeight,
+
+                colors: colorsURL,
+                variants: request.body.variants,
+                vehicle_slug: request.body.vehicle_slug,
+                brand_slug: request.body.brand_slug
+            })
+
             const vehicle = await data.save()
             response.status(201).json(vehicle)
         }
