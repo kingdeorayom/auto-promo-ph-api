@@ -57,7 +57,8 @@ router.post('/', multipleUpload, async (request, response) => {
     let colorsURL
 
     try {
-        const mainImageStorageRef = ref(storage, `files/auto-promo-ph-${Date.now()}-${request.files.image[0].originalname}`);
+        // const mainImageStorageRef = ref(storage, `files/main-image-${request.body.vehicleSlug}-${request.files.image[0].originalname}`);
+        const mainImageStorageRef = ref(storage, `files/main-image-${request.body.vehicleSlug}-${request.files.image[0].originalname}`);
         const mainImageMetadata = { contentType: request.files.image[0].mimetype };
         const mainImageSnapshot = await uploadBytesResumable(mainImageStorageRef, request.files.image[0].buffer, mainImageMetadata);
         mainImageURL = await getDownloadURL(mainImageSnapshot.ref);
@@ -67,8 +68,9 @@ router.post('/', multipleUpload, async (request, response) => {
 
     try {
 
-        extraImagesURL = await Promise.all(request.files['extraImages[]'].map(async (item) => {
-            const extraImagesStorageRef = ref(storage, `files/auto-promo-ph-${Date.now()}-${item.originalname}`);
+        extraImagesURL = await Promise.all(request.files['extraImages[]'].map(async (item, index) => {
+            const extraImagesStorageRef = ref(storage, `files/extra-image-${index}-${request.body.vehicleSlug}`);
+            // const extraImagesStorageRef = ref(storage, `files/extra-image-${request.body.vehicleSlug}-${item.originalname}`);
             const extraImagesMetaData = { contentType: item.mimetype };
             const extraImagesSnapshot = await uploadBytesResumable(extraImagesStorageRef, item.buffer, extraImagesMetaData);
             return await getDownloadURL(extraImagesSnapshot.ref)
@@ -80,8 +82,9 @@ router.post('/', multipleUpload, async (request, response) => {
 
     try {
 
-        colorsURL = await Promise.all(request.files['colors[]'].map(async (item) => {
-            const colorsStorageRef = ref(storage, `files/auto-promo-ph-${Date.now()}-${item.originalname}`);
+        colorsURL = await Promise.all(request.files['colors[]'].map(async (item, index) => {
+            // const colorsStorageRef = ref(storage, `files/color-${request.body.vehicleSlug}-${item.originalname}`);
+            const colorsStorageRef = ref(storage, `files/color-${index}-${request.body.vehicleSlug}`);
             const colorsMetaData = { contentType: item.mimetype };
             const colorsSnapshot = await uploadBytesResumable(colorsStorageRef, item.buffer, colorsMetaData);
             return await getDownloadURL(colorsSnapshot.ref)
@@ -144,25 +147,6 @@ router.post('/', multipleUpload, async (request, response) => {
         variants: request.body.variants,
         vehicle_slug: request.body.vehicle_slug,
         brand_slug: request.body.brand_slug
-
-        // name: request.body.name,
-        // unitPrice: request.body.unitPrice,
-        // netPrice: request.body.netPrice,
-        // downpayment: request.body.downpayment,
-        // amortization: request.body.amortization,
-        // description: request.body.description,
-        // image: mainImageURL,
-        // extraImages: extraImagesURL,
-        // brand: request.body.brand,
-        // model: request.body.model,
-        // bodyType: request.body.bodyType,
-        // transmission: request.body.transmission,
-        // fuelType: request.body.fuelType,
-        // year: request.body.year,
-        // colors: colorsURL,
-        // variants: request.body.variants,
-        // vehicle_slug: request.body.vehicle_slug,
-        // brand_slug: request.body.brand_slug
     })
 
     try {

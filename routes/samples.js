@@ -29,11 +29,13 @@ router.get("/", (req, res) => {
 
 router.post("/", upload.single("filename"), async (req, res) => {
 
+    const vehicleSlug = 'test-slug'
+
     try {
 
         const dateTime = Date.now();
 
-        const storageRef = ref(storage, `files/auto-promo-ph-${dateTime}-${req.file.originalname}`);
+        const storageRef = ref(storage, `files/auto-promo-ph-${vehicleSlug}`);
 
         // Create file metadata including the content type
         const metadata = {
