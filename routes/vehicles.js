@@ -171,16 +171,44 @@ router.post('/', multipleUpload, async (request, response) => {
 // Updating one vehicle
 router.patch('/:id', multipleUpload, async (request, response) => {
 
-    let mainImagePath
-    let extraImagesPath
+    let mainImageURL
+    let extraImagesURL
+    let colorsURL
 
     try {
-        mainImagePath = request.files.image[0].destination.substring(1) + "/" + request.files.image[0].filename
-        extraImagesPath = request.files['extraImages[]'].map((item) => {
-            return item.destination.substring(1) + "/" + item.filename
-        })
+        const fileExtension = request.files.image[0].mimetype.substr(request.files.image[0].mimetype.indexOf('/') + 1)
+        const mainImageStorageRef = ref(storage, `files/${request.body.vehicle_slug}-main-image.${fileExtension}`);
+        const mainImageMetadata = { contentType: request.files.image[0].mimetype };
+        const mainImageSnapshot = await uploadBytesResumable(mainImageStorageRef, request.files.image[0].buffer, mainImageMetadata);
+        mainImageURL = await getDownloadURL(mainImageSnapshot.ref);
     } catch (error) {
-        response.status(400).json({ message: "Update error. All Vehicle Images are required." })
+        response.status(400).json({ message: error.message })
+    }
+
+    try {
+        extraImagesURL = await Promise.all(request.files['extraImages[]'].map(async (item, index) => {
+            let fileExtension = item.mimetype.substr(item.mimetype.indexOf('/') + 1)
+            const extraImagesStorageRef = ref(storage, `files/${request.body.vehicle_slug}-extra-image-${index}.${fileExtension}`);
+            const extraImagesMetaData = { contentType: item.mimetype };
+            const extraImagesSnapshot = await uploadBytesResumable(extraImagesStorageRef, item.buffer, extraImagesMetaData);
+            return await getDownloadURL(extraImagesSnapshot.ref)
+        }))
+
+    } catch (error) {
+        response.status(400).json({ message: error.message })
+    }
+
+    try {
+        colorsURL = await Promise.all(request.files['colors[]'].map(async (item, index) => {
+            let fileExtension = item.mimetype.substr(item.mimetype.indexOf('/') + 1)
+            const colorsStorageRef = ref(storage, `files/${request.body.vehicle_slug}-color-${index}.${fileExtension}`);
+            const colorsMetaData = { contentType: item.mimetype };
+            const colorsSnapshot = await uploadBytesResumable(colorsStorageRef, item.buffer, colorsMetaData);
+            return await getDownloadURL(colorsSnapshot.ref)
+        }))
+
+    } catch (error) {
+        response.status(400).json({ message: "Vehicle colors are required" })
     }
 
     try {
@@ -191,22 +219,53 @@ router.patch('/:id', multipleUpload, async (request, response) => {
             {
                 $set: {
                     name: request.body.name,
+                    description: request.body.description,
+                    brand: request.body.brand,
+                    model: request.body.model,
+                    bodyType: request.body.bodyType,
+                    fuelType: request.body.fuelType,
+                    year: request.body.year,
+                    image: mainImageURL,
+                    extraImages: extraImagesURL,
+
                     unitPrice: request.body.unitPrice,
                     netPrice: request.body.netPrice,
                     downpayment: request.body.downpayment,
                     amortization: request.body.amortization,
-                    description: request.body.description,
-                    image: mainImagePath,
-                    extraImages: extraImagesPath,
-                    brand: request.body.brand,
-                    model: request.body.model,
-                    bodyType: request.body.bodyType,
-                    transmission: request.body.transmission,
-                    fuelType: request.body.fuelType,
-                    power: request.body.power,
-                    engineDisplacement: request.body.engineDisplacement,
-                    year: request.body.year,
-                    colors: request.body.colors,
+
+                    overallLength: request.body.overallLength,
+                    overallWidth: request.body.overallWidth,
+                    overallHeight: request.body.overallHeight,
+                    wheelbase: request.body.wheelbase,
+                    tread: request.body.tread,
+                    minimumTurningRadius: request.body.minimumTurningRadius,
+                    minimumGroundClearance: request.body.minimumGroundClearance,
+                    approachAngle: request.body.approachAngle,
+                    rampBreakoverAngle: request.body.rampBreakoverAngle,
+                    departureAngle: request.body.departureAngle,
+
+                    numberOfCylinders: request.body.numberOfCylinders,
+                    numberOfValves: request.body.numberOfValves,
+                    pistonDisplacement: request.body.pistonDisplacement,
+                    maximumOutput: request.body.maximumOutput,
+                    maximumTorque: request.body.maximumTorque,
+
+                    transmissionType: request.body.transmissionType,
+                    driveSystem: request.body.driveSystem,
+
+                    steering: request.body.steering,
+                    brakes: request.body.brakes,
+                    suspension: request.body.suspension,
+                    tyres: request.body.tyres,
+
+                    seatingCapacity: request.body.seatingCapacity,
+                    luggageCapacity: request.body.luggageCapacity,
+                    fuelTankCapacity: request.body.fuelTankCapacity,
+
+                    kerbWeight: request.body.kerbWeight,
+                    grossWeight: request.body.grossWeight,
+
+                    colors: colorsURL,
                     variants: request.body.variants,
                     vehicle_slug: request.body.vehicle_slug,
                     brand_slug: request.body.brand_slug
